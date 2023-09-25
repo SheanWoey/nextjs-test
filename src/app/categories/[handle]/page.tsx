@@ -7,10 +7,6 @@ import ProductsByCategory from './product-lists';
 // sections
 // ----------------------------------------------------------------------
 
-export const metadata: Metadata = {
-  title: 'Product Page',
-};
-
 type Props = {
   params: {
     handle: string;

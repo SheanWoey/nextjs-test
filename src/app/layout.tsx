@@ -1,3 +1,5 @@
+'use client';
+
 // scrollbar
 import 'simplebar-react/dist/simplebar.min.css';
 

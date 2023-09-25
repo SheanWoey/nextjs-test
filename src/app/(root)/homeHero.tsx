@@ -1,3 +1,5 @@
+'use client';
+
 import { m, useScroll } from 'framer-motion';
 import { useEffect, useRef, useState, useCallback } from 'react';
 // @mui

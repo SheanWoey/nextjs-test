@@ -1,5 +1,3 @@
-'use client';
-
 // scrollbar
 import 'simplebar-react/dist/simplebar.min.css';
 
@@ -30,6 +28,10 @@ import { AuthProvider, AuthConsumer } from 'src/auth/context/jwt';
 import ClientsideLayout from './clientLayout';
 
 // ----------------------------------------------------------------------
+
+type Props = {
+  children: React.ReactNode;
+};
 
 export const metadata: Metadata = {
   title: 'Minimal UI Kit',
@@ -66,10 +68,6 @@ export const metadata: Metadata = {
       url: '/favicon/apple-touch-icon.png',
     },
   ],
-};
-
-type Props = {
-  children: React.ReactNode;
 };
 
 export default function RootLayout({ children }: Props) {

@@ -102,45 +102,45 @@ export default function ProductDetailsSummary({
     </Box>
   );
 
-  // const renderShare = (
-  //   <Stack direction="row" spacing={3} justifyContent="center">
-  //     <Link
-  //       variant="subtitle2"
-  //       sx={{
-  //         color: 'text.secondary',
-  //         display: 'inline-flex',
-  //         alignItems: 'center',
-  //       }}
-  //     >
-  //       <Iconify icon="mingcute:add-line" width={16} sx={{ mr: 1 }} />
-  //       Compare
-  //     </Link>
+  const renderShare = (
+    <Stack direction="row" spacing={3} justifyContent="center">
+      <Link
+        variant="subtitle2"
+        sx={{
+          color: 'text.secondary',
+          display: 'inline-flex',
+          alignItems: 'center',
+        }}
+      >
+        <Iconify icon="mingcute:add-line" width={16} sx={{ mr: 1 }} />
+        Compare
+      </Link>
 
-  //     <Link
-  //       variant="subtitle2"
-  //       sx={{
-  //         color: 'text.secondary',
-  //         display: 'inline-flex',
-  //         alignItems: 'center',
-  //       }}
-  //     >
-  //       <Iconify icon="solar:heart-bold" width={16} sx={{ mr: 1 }} />
-  //       Favorite
-  //     </Link>
+      <Link
+        variant="subtitle2"
+        sx={{
+          color: 'text.secondary',
+          display: 'inline-flex',
+          alignItems: 'center',
+        }}
+      >
+        <Iconify icon="solar:heart-bold" width={16} sx={{ mr: 1 }} />
+        Favorite
+      </Link>
 
-  //     <Link
-  //       variant="subtitle2"
-  //       sx={{
-  //         color: 'text.secondary',
-  //         display: 'inline-flex',
-  //         alignItems: 'center',
-  //       }}
-  //     >
-  //       <Iconify icon="solar:share-bold" width={16} sx={{ mr: 1 }} />
-  //       Share
-  //     </Link>
-  //   </Stack>
-  // );
+      <Link
+        variant="subtitle2"
+        sx={{
+          color: 'text.secondary',
+          display: 'inline-flex',
+          alignItems: 'center',
+        }}
+      >
+        <Iconify icon="solar:share-bold" width={16} sx={{ mr: 1 }} />
+        Share
+      </Link>
+    </Stack>
+  );
 
   const renderOption = (option: ProductOption) => (
     <Stack direction="row">

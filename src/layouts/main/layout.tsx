@@ -7,7 +7,6 @@ import { usePathname } from 'src/routes/hooks';
 //
 import Footer from './footer';
 import Header from './header';
-import ClientLayout from 'src/app/useClientLayout';
 
 // ----------------------------------------------------------------------
 
@@ -33,7 +32,7 @@ export default function MainLayout({ children }: Props) {
           }),
         }}
       >
-        <ClientLayout>{children}</ClientLayout>
+        {children}
       </Box>
 
       <Footer />

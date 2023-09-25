@@ -16,7 +16,6 @@ import { useResponsive } from 'src/hooks/use-responsive';
 import { bgGradient } from 'src/theme/css';
 // components
 import Logo from 'src/components/logo';
-import ClientLayout from 'src/app/useClientLayout';
 
 // ----------------------------------------------------------------------
 
@@ -117,20 +116,18 @@ export default function AuthClassicLayout({ children, image, title }: Props) {
   );
 
   return (
-    <ClientLayout>
-      <Stack
-        component="main"
-        direction="row"
-        sx={{
-          minHeight: '100vh',
-        }}
-      >
-        {renderLogo}
+    <Stack
+      component="main"
+      direction="row"
+      sx={{
+        minHeight: '100vh',
+      }}
+    >
+      {renderLogo}
 
-        {upMd && renderSection}
+      {upMd && renderSection}
 
-        {renderContent}
-      </Stack>
-    </ClientLayout>
+      {renderContent}
+    </Stack>
   );
 }

@@ -1,3 +1,5 @@
+"use client";
+
 import { useProductCategories, useProducts } from 'medusa-react';
 import { Box, Container, Pagination, Typography } from '@mui/material';
 import { LoadingScreen } from 'src/components/loading-screen';

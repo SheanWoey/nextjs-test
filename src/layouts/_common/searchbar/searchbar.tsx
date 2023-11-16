@@ -24,8 +24,9 @@ import { useRouter } from 'src/routes/hooks';
 import SearchNotFound from 'src/components/search-not-found';
 //
 import ResultItem from './result-item';
-import { useNavData } from '../../dashboard/config-navigation';
 import { applyFilter, groupedData, getAllItems } from './utils';
+import { useProducts } from 'medusa-react';
+import { NavListProps } from 'src/components/nav-section';
 
 // ----------------------------------------------------------------------
 
@@ -40,7 +41,15 @@ function Searchbar() {
 
   const [searchQuery, setSearchQuery] = useState('');
 
-  const navData = useNavData();
+  const {
+    products: productsFilter,
+    isSuccess,
+    refetch,
+  } = useProducts({
+    q: searchQuery,
+    limit: 10,
+    fields: 'handle,title,id',
+  });
 
   const handleClose = useCallback(() => {
     search.onFalse();
@@ -70,39 +79,42 @@ function Searchbar() {
 
   const handleSearch = useCallback((event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setSearchQuery(event.target.value);
+    refetch();
   }, []);
 
-  const dataFiltered = applyFilter({
-    inputData: getAllItems({ data: navData }),
-    query: searchQuery,
-  });
+  const dataFiltered = isSuccess
+    ? applyFilter({
+        inputData: getAllItems(productsFilter) as NavListProps[],
+        query: searchQuery,
+      })
+    : [];
 
-  const notFound = searchQuery && !dataFiltered.length;
+  const notFound = searchQuery && !dataFiltered?.length;
 
   const renderItems = () => {
     const data = groupedData(dataFiltered);
 
-    return Object.keys(data)
+    return Object.keys(data || [])
       .sort((a, b) => -b.localeCompare(a))
       .map((group, index) => (
         <List key={group || index} disablePadding>
-          {data[group].map((item) => {
-            const { title, path } = item;
+          {data &&
+            data[group].map((item: any) => {
+              const { title, path } = item;
 
-            const partsTitle = parse(title, match(title, searchQuery));
+              const partsTitle = parse(title, match(title, searchQuery));
 
-            const partsPath = parse(path, match(path, searchQuery));
+              const partsPath = parse(path, match(path, searchQuery));
 
-            return (
-              <ResultItem
-                path={partsPath}
-                title={partsTitle}
-                key={`${title}${path}`}
-                groupLabel={searchQuery && group}
-                onClickItem={() => handleClick(path)}
-              />
-            );
-          })}
+              return (
+                <ResultItem
+                  path={partsPath}
+                  title={partsTitle}
+                  key={`${title}${path}`}
+                  onClickItem={() => handleClick(path)}
+                />
+              );
+            })}
         </List>
       ));
   };
@@ -112,8 +124,6 @@ function Searchbar() {
       <IconButton onClick={search.onTrue}>
         <Iconify icon="eva:search-fill" />
       </IconButton>
-
-      {mdUp && <Label sx={{ px: 0.75, fontSize: 12, color: 'text.secondary' }}>⌘K</Label>}
     </Stack>
   );
 

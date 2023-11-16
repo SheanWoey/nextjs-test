@@ -22,13 +22,13 @@ export default function HomeView() {
           bgcolor: 'background.default',
         }}
       >
-        {/* <HomeMinimal />
+        {/* <HomeProducts />
 
         <HomeHugePackElements />
 
         <Box sx={{ position: 'relative' }}>
           <StyledPolygon />
-          <HomeForDesigner />
+          <HomeForPromotion />
           <StyledPolygon anchor="bottom" />
         </Box>
 

@@ -1,8 +1,10 @@
 import { useCallback, useEffect } from 'react';
 // routes
-import { useMeCustomer } from 'medusa-react';
 import { paths } from 'src/routes/paths';
 import { useRouter, useSearchParams } from 'src/routes/hooks';
+//
+import { useAuthContext } from '../hooks';
+
 // ----------------------------------------------------------------------
 
 type Props = {
@@ -16,8 +18,7 @@ export default function GuestGuard({ children }: Props) {
 
   const returnTo = searchParams.get('returnTo') || paths.dashboard.root;
 
-  const session = useMeCustomer();
-  const authenticated = session?.customer && !session?.failureReason;
+  const { authenticated } = useAuthContext();
 
   const check = useCallback(() => {
     if (authenticated) {

@@ -1,6 +1,5 @@
 import { useEffect, useCallback, useState } from 'react';
 // routes
-import { useMeCustomer } from 'medusa-react';
 import { paths } from 'src/routes/paths';
 import { useRouter } from 'src/routes/hooks';
 //
@@ -21,10 +20,7 @@ type Props = {
 export default function AuthGuard({ children }: Props) {
   const router = useRouter();
 
-  const session = useMeCustomer();
-  const authenticated = session?.customer && !session?.failureReason;
-
-  const { method } = useAuthContext();
+  const { authenticated, method } = useAuthContext();
 
   const [checked, setChecked] = useState(false);
 

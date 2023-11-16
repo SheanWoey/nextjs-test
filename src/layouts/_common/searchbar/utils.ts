@@ -2,25 +2,15 @@
 import { flattenArray } from 'src/utils/flatten-array';
 // components
 import { NavListProps, NavSectionProps } from 'src/components/nav-section';
+import { PricedProduct } from '@medusajs/medusa/dist/types/pricing';
 
 // ----------------------------------------------------------------------
 
-type ItemProps = {
-  group: string;
-  title: string;
-  path: string;
-};
-
-export function getAllItems({ data }: NavSectionProps) {
-  const reduceItems = data.map((list) => handleLoop(list.items, list.subheader)).flat();
-
-  const items = flattenArray(reduceItems).map((option) => {
-    const group = splitPath(reduceItems, option.path);
-
+export function getAllItems(data: PricedProduct[] | undefined) {
+  const items = flattenArray(data || []).map((option) => {
     return {
-      group: group && group.length > 1 ? group[0] : option.subheader,
       title: option.title,
-      path: option.path,
+      path: `/products/${option.handle}`,
     };
   });
 
@@ -30,13 +20,13 @@ export function getAllItems({ data }: NavSectionProps) {
 // ----------------------------------------------------------------------
 
 type FilterProps = {
-  inputData: ItemProps[];
+  inputData: NavListProps[];
   query: string;
 };
 
 export function applyFilter({ inputData, query }: FilterProps) {
   if (query) {
-    inputData = inputData.filter(
+    inputData = inputData?.filter(
       (item) =>
         item.title.toLowerCase().indexOf(query.toLowerCase()) !== -1 ||
         item.path.toLowerCase().indexOf(query.toLowerCase()) !== -1
@@ -91,17 +81,16 @@ export function handleLoop(array: any, subheader?: string) {
 // ----------------------------------------------------------------------
 
 type GroupsProps = {
-  [key: string]: ItemProps[];
+  [key: string]: NavListProps[];
 };
 
-export function groupedData(array: ItemProps[]) {
-  const group = array.reduce((groups: GroupsProps, item) => {
-    groups[item.group] = groups[item.group] || [];
+export function groupedData(array?: NavListProps[]) {
+  const group = array?.reduce((groups: GroupsProps, item) => {
+    groups[item.title] = groups[item.title] || [];
 
-    groups[item.group].push(item);
+    groups[item.title].push(item);
 
     return groups;
   }, {});
-
   return group;
 }

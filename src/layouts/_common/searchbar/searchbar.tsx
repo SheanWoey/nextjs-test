@@ -13,8 +13,8 @@ import IconButton from '@mui/material/IconButton';
 import InputAdornment from '@mui/material/InputAdornment';
 import Dialog, { dialogClasses } from '@mui/material/Dialog';
 // hooks
+import { useProducts } from 'medusa-react';
 import { useBoolean } from 'src/hooks/use-boolean';
-import { useResponsive } from 'src/hooks/use-responsive';
 import { useEventListener } from 'src/hooks/use-event-listener';
 // components
 import Label from 'src/components/label';
@@ -23,10 +23,9 @@ import Scrollbar from 'src/components/scrollbar';
 import { useRouter } from 'src/routes/hooks';
 import SearchNotFound from 'src/components/search-not-found';
 //
+import { NavListProps } from 'src/components/nav-section';
 import ResultItem from './result-item';
 import { applyFilter, groupedData, getAllItems } from './utils';
-import { useProducts } from 'medusa-react';
-import { NavListProps } from 'src/components/nav-section';
 
 // ----------------------------------------------------------------------
 
@@ -36,8 +35,6 @@ function Searchbar() {
   const router = useRouter();
 
   const search = useBoolean();
-
-  const mdUp = useResponsive('up', 'md');
 
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -80,6 +77,7 @@ function Searchbar() {
   const handleSearch = useCallback((event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setSearchQuery(event.target.value);
     refetch();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const dataFiltered = isSuccess

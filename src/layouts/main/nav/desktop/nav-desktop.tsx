@@ -1,9 +1,9 @@
 // @mui
 import Stack from '@mui/material/Stack';
 //
+import { Searchbar } from 'src/layouts/_common';
 import { NavProps } from '../types';
 import NavList from './nav-list';
-import { Searchbar } from 'src/layouts/_common';
 
 // ----------------------------------------------------------------------
 

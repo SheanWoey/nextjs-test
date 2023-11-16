@@ -1,18 +1,16 @@
 // utils
+import { PricedProduct } from '@medusajs/medusa/dist/types/pricing';
 import { flattenArray } from 'src/utils/flatten-array';
 // components
-import { NavListProps, NavSectionProps } from 'src/components/nav-section';
-import { PricedProduct } from '@medusajs/medusa/dist/types/pricing';
+import { NavListProps } from 'src/components/nav-section';
 
 // ----------------------------------------------------------------------
 
 export function getAllItems(data: PricedProduct[] | undefined) {
-  const items = flattenArray(data || []).map((option) => {
-    return {
-      title: option.title,
-      path: `/products/${option.handle}`,
-    };
-  });
+  const items = flattenArray(data || []).map((option) => ({
+    title: option.title,
+    path: `/products/${option.handle}`,
+  }));
 
   return items;
 }

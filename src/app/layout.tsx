@@ -16,7 +16,6 @@ import 'react-lazy-load-image-component/src/effects/blur.css';
 // ----------------------------------------------------------------------
 
 // theme
-import { Metadata } from 'next';
 import ThemeProvider from 'src/theme';
 import { primaryFont } from 'src/theme/typography';
 // components
@@ -29,11 +28,7 @@ import ClientsideLayout from './clientLayout';
 
 // ----------------------------------------------------------------------
 
-type Props = {
-  children: React.ReactNode;
-};
-
-export const metadata: Metadata = {
+export const metadata = {
   title: 'Minimal UI Kit',
   description:
     'The starting point for your next project with Minimal UI Kit, built on the newest version of Material-UI ©, ready to be customized to your style',
@@ -68,6 +63,10 @@ export const metadata: Metadata = {
       url: '/favicon/apple-touch-icon.png',
     },
   ],
+};
+
+type Props = {
+  children: React.ReactNode;
 };
 
 export default function RootLayout({ children }: Props) {

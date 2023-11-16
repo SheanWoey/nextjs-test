@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import { useProductCategories, useProducts } from 'medusa-react';
 import { Box, Container, Pagination, Typography } from '@mui/material';

@@ -8,7 +8,7 @@ import Toolbar from '@mui/material/Toolbar';
 import Container from '@mui/material/Container';
 import Badge, { badgeClasses } from '@mui/material/Badge';
 // hooks
-import { useProductCategories } from 'medusa-react';
+import { useMeCustomer, useProductCategories } from 'medusa-react';
 import { useMemo } from 'react';
 import { useOffSetTop } from 'src/hooks/use-off-set-top';
 import { useResponsive } from 'src/hooks/use-responsive';
@@ -24,7 +24,7 @@ import { HEADER } from '../config-layout';
 import NavMobile from './nav/mobile';
 import NavDesktop from './nav/desktop';
 //
-import { HeaderShadow, LoginButton } from '../_common';
+import { AccountPopover, HeaderShadow, LoginButton } from '../_common';
 
 // ----------------------------------------------------------------------
 
@@ -32,6 +32,9 @@ export default function Header() {
   const theme = useTheme();
 
   const mdUp = useResponsive('up', 'md');
+
+  const session = useMeCustomer();
+  const authenticated = session?.customer && !session?.failureReason;
 
   const offsetTop = useOffSetTop(HEADER.H_DESKTOP);
 
@@ -115,7 +118,7 @@ export default function Header() {
           {mdUp && <NavDesktop offsetTop={offsetTop} data={navConfig} isLoading={isLoading} />}
 
           <Stack alignItems="center" direction={{ xs: 'row', md: 'row-reverse' }}>
-            {mdUp && <LoginButton />}
+            {mdUp && authenticated ? <AccountPopover /> : <LoginButton />}
 
             {!mdUp && <NavMobile offsetTop={offsetTop} data={navConfig} />}
           </Stack>

@@ -13,6 +13,7 @@ import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import InputAdornment from '@mui/material/InputAdornment';
 // routes
+import { useMedusa } from 'medusa-react';
 import { paths } from 'src/routes/paths';
 import { RouterLink } from 'src/routes/components';
 import { useSearchParams, useRouter } from 'src/routes/hooks';
@@ -21,21 +22,17 @@ import { PATH_AFTER_LOGIN } from 'src/config-global';
 // hooks
 import { useBoolean } from 'src/hooks/use-boolean';
 // auth
-import { useAuthContext } from 'src/auth/hooks';
 // components
 import Iconify from 'src/components/iconify';
 import FormProvider, { RHFTextField } from 'src/components/hook-form';
-
 // ----------------------------------------------------------------------
 
 export default function JwtLoginView() {
-  const { login } = useAuthContext();
-
-  const router = useRouter();
-
   const [errorMsg, setErrorMsg] = useState('');
 
   const searchParams = useSearchParams();
+  const router = useRouter();
+  const medusa = useMedusa();
 
   const returnTo = searchParams.get('returnTo');
 
@@ -47,8 +44,8 @@ export default function JwtLoginView() {
   });
 
   const defaultValues = {
-    email: 'demo@minimals.cc',
-    password: 'demo1234',
+    email: 'ww11111@ww.com',
+    password: '1',
   };
 
   const methods = useForm({
@@ -62,16 +59,16 @@ export default function JwtLoginView() {
     formState: { isSubmitting },
   } = methods;
 
-  const onSubmit = handleSubmit(async (data) => {
-    try {
-      await login?.(data.email, data.password);
-
-      router.push(returnTo || PATH_AFTER_LOGIN);
-    } catch (error) {
-      console.error(error);
-      reset();
-      setErrorMsg(typeof error === 'string' ? error : error.message);
-    }
+  const onSubmit = handleSubmit(async (credentials) => {
+    medusa.client.auth
+      .authenticate(credentials)
+      .then(() => {
+        router.push(returnTo || PATH_AFTER_LOGIN);
+      })
+      .catch((error: any) => {
+        reset();
+        setErrorMsg(error.response.request.responseText);
+      });
   });
 
   const renderHead = (

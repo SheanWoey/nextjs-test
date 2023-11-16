@@ -9,14 +9,14 @@ import MenuItem from '@mui/material/MenuItem';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 // routes
+import { useMeCustomer, useMedusa } from 'medusa-react';
 import { useRouter } from 'src/routes/hooks';
 // hooks
 import { useMockedUser } from 'src/hooks/use-mocked-user';
-// auth
-import { useAuthContext } from 'src/auth/hooks';
 // components
 import { varHover } from 'src/components/animate';
 import CustomPopover, { usePopover } from 'src/components/custom-popover';
+import { useSnackbar } from 'notistack';
 
 // ----------------------------------------------------------------------
 
@@ -27,7 +27,7 @@ const OPTIONS = [
   },
   {
     label: 'Profile',
-    linkTo: '/#1',
+    linkTo: '/dashboard',
   },
   {
     label: 'Settings',
@@ -41,19 +41,24 @@ export default function AccountPopover() {
   const router = useRouter();
 
   const { user } = useMockedUser();
+  const session = useMeCustomer();
+  const { enqueueSnackbar } = useSnackbar();
 
-  const { logout } = useAuthContext();
+  const medusa = useMedusa();
 
   const popover = usePopover();
 
   const handleLogout = async () => {
-    try {
-      await logout();
-      popover.onClose();
-      router.replace('/');
-    } catch (error) {
-      console.error(error);
-    }
+    medusa.client.auth
+      .deleteSession()
+      .then(() => {
+        popover.onClose();
+        window.location.reload();
+        router.replace('/');
+      })
+      .catch((error) => {
+        enqueueSnackbar(error.message, { variant: 'error' });
+      });
   };
 
   const handleClickItem = (path: string) => {
@@ -93,11 +98,11 @@ export default function AccountPopover() {
       <CustomPopover open={popover.open} onClose={popover.onClose} sx={{ width: 200, p: 0 }}>
         <Box sx={{ p: 2, pb: 1.5 }}>
           <Typography variant="subtitle2" noWrap>
-            {user?.displayName}
+            {session?.customer?.first_name || session?.customer?.email}
           </Typography>
 
           <Typography variant="body2" sx={{ color: 'text.secondary' }} noWrap>
-            {user?.email}
+            {session?.customer?.email}
           </Typography>
         </Box>
 
@@ -105,7 +110,7 @@ export default function AccountPopover() {
 
         <Stack sx={{ p: 1 }}>
           {OPTIONS.map((option) => (
-            <MenuItem key={option.label} onClick={() => handleClickItem(option.linkTo)}>
+            <MenuItem href="" key={option.label} onClick={() => handleClickItem(option.linkTo)}>
               {option.label}
             </MenuItem>
           ))}
@@ -114,7 +119,8 @@ export default function AccountPopover() {
         <Divider sx={{ borderStyle: 'dashed' }} />
 
         <MenuItem
-          onClick={handleLogout}
+          href=""
+          onClick={() => handleLogout()}
           sx={{ m: 1, fontWeight: 'fontWeightBold', color: 'error.main' }}
         >
           Logout

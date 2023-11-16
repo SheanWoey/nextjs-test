@@ -13,29 +13,28 @@ import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import InputAdornment from '@mui/material/InputAdornment';
 // hooks
+import { useCreateCustomer } from 'medusa-react';
+import { useSnackbar } from 'notistack';
 import { useBoolean } from 'src/hooks/use-boolean';
 // routes
 import { paths } from 'src/routes/paths';
 import { RouterLink } from 'src/routes/components';
 import { useSearchParams, useRouter } from 'src/routes/hooks';
-// config
-import { PATH_AFTER_LOGIN } from 'src/config-global';
-// auth
-import { useAuthContext } from 'src/auth/hooks';
 // components
 import Iconify from 'src/components/iconify';
 import FormProvider, { RHFTextField } from 'src/components/hook-form';
+import { PATH_AFTER_LOGIN } from 'src/config-global';
 
 // ----------------------------------------------------------------------
 
 export default function JwtRegisterView() {
-  const { register } = useAuthContext();
-
   const router = useRouter();
+  const { enqueueSnackbar } = useSnackbar();
 
   const [errorMsg, setErrorMsg] = useState('');
 
   const searchParams = useSearchParams();
+  const createCustomer = useCreateCustomer();
 
   const returnTo = searchParams.get('returnTo');
 
@@ -60,22 +59,25 @@ export default function JwtRegisterView() {
     defaultValues,
   });
 
-  const {
-    reset,
-    handleSubmit,
-    formState: { isSubmitting },
-  } = methods;
+  const { reset, handleSubmit } = methods;
 
   const onSubmit = handleSubmit(async (data) => {
-    try {
-      await register?.(data.email, data.password, data.firstName, data.lastName);
-
-      router.push(returnTo || PATH_AFTER_LOGIN);
-    } catch (error) {
-      console.error(error);
-      reset();
-      setErrorMsg(typeof error === 'string' ? error : error.message);
-    }
+    createCustomer
+      .mutateAsync({
+        first_name: data.firstName,
+        last_name: data.lastName,
+        email: data.email,
+        password: data.password,
+      })
+      .then(() => {
+        enqueueSnackbar('Register Successful', { variant: 'success' });
+        reset();
+        router.push(returnTo || PATH_AFTER_LOGIN);
+      })
+      .catch((error) => {
+        reset();
+        setErrorMsg(error.response.data.message);
+      });
   });
 
   const renderHead = (
@@ -147,7 +149,7 @@ export default function JwtRegisterView() {
           size="large"
           type="submit"
           variant="contained"
-          loading={isSubmitting}
+          loading={createCustomer.isLoading}
         >
           Create account
         </LoadingButton>
@@ -160,7 +162,6 @@ export default function JwtRegisterView() {
       {renderHead}
 
       {renderForm}
-
       {renderTerms}
     </>
   );

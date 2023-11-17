@@ -25,7 +25,12 @@ export type NavItemProps = ListItemButtonProps & {
 export type NavListProps = {
   title: string;
   path: string;
-  handle: string;
+  icon?: React.ReactElement;
+  info?: React.ReactElement;
+  caption?: string;
+  disabled?: boolean;
+  roles?: string[];
+  handle?: string;
   children?: any;
 };
 

@@ -14,7 +14,6 @@ import Logo from 'src/components/logo';
 import SvgColor from 'src/components/svg-color';
 import Scrollbar from 'src/components/scrollbar';
 //
-import Searchbar from 'src/layouts/_common/searchbar';
 import { NavProps } from '../types';
 import NavList from './nav-list';
 
@@ -58,7 +57,6 @@ export default function NavMobile({ offsetTop, data }: NavProps) {
       >
         <Scrollbar>
           <Logo sx={{ mx: 2.5, my: 3 }} />
-          <Searchbar />
 
           <List component="nav" disablePadding>
             {data.map((link) => (

@@ -1,10 +1,19 @@
 'use client';
 
-import { Region } from '@medusajs/medusa';
-import { useCart, useCreateLineItem, useDeleteLineItem, useUpdateLineItem } from 'medusa-react';
+import { Cart, Region } from '@medusajs/medusa';
+import {
+  useCart,
+  useCreateLineItem,
+  useDeleteLineItem,
+  useMeCustomer,
+  useMedusa,
+  useUpdateLineItem,
+} from 'medusa-react';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { medusaClient } from 'src/utils/medusaClient';
 import { useSnackbar } from 'src/components/snackbar';
+import { useRouter } from 'src/routes/hooks';
+import { paths } from 'src/routes/paths';
 
 interface VariantInfoProps {
   variantId: string;
@@ -17,6 +26,7 @@ interface LineInfoProps {
 }
 
 interface IStoreContext {
+  customerCart: Omit<Cart, 'refundable_amount' | 'refunded_total'> | undefined;
   countryCode: string | undefined;
   setRegion: (regionId: string, countryCode: string) => void;
   addItem: (item: VariantInfoProps) => void;
@@ -42,7 +52,6 @@ interface StoreProps {
 }
 
 const IS_SERVER = typeof window === 'undefined';
-const CART_KEY = 'medusa_cart_id';
 const REGION_KEY = 'medusa_region';
 
 export const StoreProvider = ({ children }: StoreProps) => {
@@ -52,6 +61,12 @@ export const StoreProvider = ({ children }: StoreProps) => {
   const removeLineItem = useDeleteLineItem(cart?.id!);
   const adjustLineItem = useUpdateLineItem(cart?.id!);
   const { enqueueSnackbar } = useSnackbar();
+
+  const session = useMeCustomer();
+  const authenticated = session?.customer && !session?.failureReason;
+
+  const router = useRouter();
+  const medusa = useMedusa();
 
   useEffect(() => {
     if (!IS_SERVER) {
@@ -73,24 +88,37 @@ export const StoreProvider = ({ children }: StoreProps) => {
     return null;
   };
 
-  const storeCart = (id: string) => {
-    if (!IS_SERVER) {
-      localStorage.setItem(CART_KEY, id);
-    }
-  };
+  const updateCartCustomer = useCallback(
+    async (id: string) => {
+      if (!IS_SERVER) {
+        await medusa.client.customers
+          .update({
+            metadata: { cart_id: id },
+          })
+          .then(() => {
+            enqueueSnackbar('data updated', { variant: 'success' });
+          })
+          .catch((error) => {
+            enqueueSnackbar(error.message, { variant: 'error' });
+          });
+      }
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [medusa.client.customers]
+  );
 
   const getCart = () => {
-    if (!IS_SERVER) {
-      return localStorage.getItem(CART_KEY);
+    if (!IS_SERVER && session?.customer) {
+      return session?.customer?.metadata.cart_id;
     }
     return null;
   };
 
-  const deleteCart = () => {
-    if (!IS_SERVER) {
-      localStorage.removeItem(CART_KEY);
-    }
-  };
+  // const deleteCart = () => {
+  //   if (!IS_SERVER) {
+  //     localStorage.removeItem(CART_KEY);
+  //   }
+  // };
 
   const deleteRegion = () => {
     if (!IS_SERVER) {
@@ -118,7 +146,7 @@ export const StoreProvider = ({ children }: StoreProps) => {
         {
           onSuccess: ({ cart: cartPtr }) => {
             setCart(cartPtr);
-            storeCart(cartPtr.id);
+
             storeRegion(regionId, inputCountryCode);
           },
           onError: (error) => {
@@ -154,60 +182,62 @@ export const StoreProvider = ({ children }: StoreProps) => {
   );
 
   const createNewCart = async (regionId?: string) => {
-    await createCart.mutateAsync(
-      { region_id: regionId },
-      {
-        onSuccess: ({ cart: cartPtr }) => {
-          setCart(cartPtr);
-          storeCart(cartPtr.id);
-          ensureRegion(cartPtr.region, cartPtr.shipping_address?.country_code);
-        },
-        onError: (error) => {
-          if (process.env.NODE_ENV === 'development') {
-            console.error(error);
-          }
-        },
-      }
-    );
+    if (authenticated) {
+      await createCart.mutate(
+        { region_id: regionId },
+        {
+          onSuccess: ({ cart: cartPtr }) => {
+            setCart(cartPtr);
+
+            updateCartCustomer(cartPtr.id);
+            ensureRegion(cartPtr.region, cartPtr.shipping_address?.country_code);
+          },
+          onError: (error) => {
+            if (process.env.NODE_ENV === 'development') {
+              console.error(error);
+            }
+          },
+        }
+      );
+    }
   };
 
   useEffect(() => {
-    const ensureCart = async () => {
-      const cartId = getCart();
-      const region = getRegion();
+    if (authenticated) {
+      const ensureCart = async () => {
+        const cartId = getCart();
+        const region = getRegion();
 
-      if (cartId) {
-        const cartRes = await medusaClient.carts
-          .retrieve(cartId)
-          .then(({ cart: cartPtr }) => cartPtr)
-          .catch(async (_) => null);
+        if (cartId && typeof cartId === 'string') {
+          const cartRes = await medusaClient.carts
+            .retrieve(cartId)
+            .then(({ cart: cartPtr }) => cartPtr)
+            .catch(async (_) => null);
 
-        if (!cartRes || cartRes.completed_at) {
-          deleteCart();
-          deleteRegion();
-          await createNewCart();
-          return;
+          if (!cartRes || cartRes.completed_at) {
+            // deleteCart();
+            deleteRegion();
+            await createNewCart();
+            return;
+          }
+
+          setCart(cartRes);
+          ensureRegion(cartRes.region);
+        } else {
+          await createNewCart(region?.regionId);
         }
+      };
 
-        setCart(cartRes);
-        ensureRegion(cartRes.region);
-      } else {
-        await createNewCart(region?.regionId);
+      if (!IS_SERVER && !cart?.id && authenticated) {
+        ensureCart();
       }
-    };
-
-    if (!IS_SERVER && !cart?.id) {
-      ensureCart();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [authenticated]);
 
   const providerValue = useMemo(() => {
     const resetCart = () => {
-      deleteCart();
-
       const savedRegion = getRegion();
-
       createCart.mutate(
         {
           region_id: savedRegion?.regionId,
@@ -215,7 +245,8 @@ export const StoreProvider = ({ children }: StoreProps) => {
         {
           onSuccess: ({ cart: cartPtr }) => {
             setCart(cartPtr);
-            storeCart(cartPtr.id);
+            updateCartCustomer(cartPtr.id);
+
             ensureRegion(cartPtr.region, cartPtr.shipping_address?.country_code);
           },
           onError: (error) => {
@@ -227,6 +258,18 @@ export const StoreProvider = ({ children }: StoreProps) => {
       );
     };
     const addItem = ({ variantId, quantity }: { variantId: string; quantity: number }) => {
+      if (!authenticated) {
+        const searchParams = new URLSearchParams({
+          returnTo: window.location.pathname,
+        }).toString();
+
+        const loginPath = paths.auth.jwt.login;
+
+        const href = `${loginPath}?${searchParams}`;
+
+        router.push(href);
+      }
+
       addLineItem.mutate(
         {
           variant_id: variantId,
@@ -235,7 +278,6 @@ export const StoreProvider = ({ children }: StoreProps) => {
         {
           onSuccess: ({ cart: cartPtr }) => {
             setCart(cartPtr);
-            storeCart(cartPtr.id);
           },
           onError: (error) => {
             enqueueSnackbar(error.message, { variant: 'error' });
@@ -252,7 +294,6 @@ export const StoreProvider = ({ children }: StoreProps) => {
         {
           onSuccess: ({ cart: cartPtr }) => {
             setCart(cartPtr);
-            storeCart(cartPtr.id);
           },
           onError: (error) => {
             enqueueSnackbar(error.message, { variant: 'error' });
@@ -270,7 +311,7 @@ export const StoreProvider = ({ children }: StoreProps) => {
         {
           onSuccess: ({ cart: cartPtr }) => {
             setCart(cartPtr);
-            storeCart(cartPtr.id);
+            enqueueSnackbar('Product quantity updated', { variant: 'success' });
           },
           onError: (error) => {
             enqueueSnackbar(error.message, { variant: 'error' });
@@ -280,6 +321,7 @@ export const StoreProvider = ({ children }: StoreProps) => {
     };
 
     return {
+      customerCart: cart,
       countryCode,
       setRegion,
       addItem,
@@ -290,13 +332,17 @@ export const StoreProvider = ({ children }: StoreProps) => {
   }, [
     addLineItem,
     adjustLineItem,
+    authenticated,
+    cart,
     countryCode,
     createCart,
     enqueueSnackbar,
     ensureRegion,
     removeLineItem,
+    router,
     setCart,
     setRegion,
+    updateCartCustomer,
   ]);
 
   return <StoreContext.Provider value={providerValue}>{children}</StoreContext.Provider>;

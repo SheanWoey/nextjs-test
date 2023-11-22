@@ -13,8 +13,8 @@ import IconButton from '@mui/material/IconButton';
 import InputAdornment from '@mui/material/InputAdornment';
 import Dialog, { dialogClasses } from '@mui/material/Dialog';
 // hooks
-import { useProducts } from 'medusa-react';
 import { useBoolean } from 'src/hooks/use-boolean';
+import { useResponsive } from 'src/hooks/use-responsive';
 import { useEventListener } from 'src/hooks/use-event-listener';
 // components
 import Label from 'src/components/label';
@@ -23,8 +23,8 @@ import Scrollbar from 'src/components/scrollbar';
 import { useRouter } from 'src/routes/hooks';
 import SearchNotFound from 'src/components/search-not-found';
 //
-import { NavListProps } from 'src/components/nav-section';
 import ResultItem from './result-item';
+import { useNavData } from '../../dashboard/config-navigation';
 import { applyFilter, groupedData, getAllItems } from './utils';
 
 // ----------------------------------------------------------------------
@@ -36,17 +36,11 @@ function Searchbar() {
 
   const search = useBoolean();
 
+  const mdUp = useResponsive('up', 'md');
+
   const [searchQuery, setSearchQuery] = useState('');
 
-  const {
-    products: productsFilter,
-    isSuccess,
-    refetch,
-  } = useProducts({
-    q: searchQuery,
-    limit: 10,
-    fields: 'handle,title,id',
-  });
+  const navData = useNavData();
 
   const handleClose = useCallback(() => {
     search.onFalse();
@@ -76,43 +70,39 @@ function Searchbar() {
 
   const handleSearch = useCallback((event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setSearchQuery(event.target.value);
-    refetch();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const dataFiltered = isSuccess
-    ? applyFilter({
-        inputData: getAllItems(productsFilter) as NavListProps[],
-        query: searchQuery,
-      })
-    : [];
+  const dataFiltered = applyFilter({
+    inputData: getAllItems({ data: navData }),
+    query: searchQuery,
+  });
 
-  const notFound = searchQuery && !dataFiltered?.length;
+  const notFound = searchQuery && !dataFiltered.length;
 
   const renderItems = () => {
     const data = groupedData(dataFiltered);
 
-    return Object.keys(data || [])
+    return Object.keys(data)
       .sort((a, b) => -b.localeCompare(a))
       .map((group, index) => (
         <List key={group || index} disablePadding>
-          {data &&
-            data[group].map((item: any) => {
-              const { title, path } = item;
+          {data[group].map((item) => {
+            const { title, path } = item;
 
-              const partsTitle = parse(title, match(title, searchQuery));
+            const partsTitle = parse(title, match(title, searchQuery));
 
-              const partsPath = parse(path, match(path, searchQuery));
+            const partsPath = parse(path, match(path, searchQuery));
 
-              return (
-                <ResultItem
-                  path={partsPath}
-                  title={partsTitle}
-                  key={`${title}${path}`}
-                  onClickItem={() => handleClick(path)}
-                />
-              );
-            })}
+            return (
+              <ResultItem
+                path={partsPath}
+                title={partsTitle}
+                key={`${title}${path}`}
+                groupLabel={searchQuery && group}
+                onClickItem={() => handleClick(path)}
+              />
+            );
+          })}
         </List>
       ));
   };
@@ -122,6 +112,8 @@ function Searchbar() {
       <IconButton onClick={search.onTrue}>
         <Iconify icon="eva:search-fill" />
       </IconButton>
+
+      {mdUp && <Label sx={{ px: 0.75, fontSize: 12, color: 'text.secondary' }}>⌘K</Label>}
     </Stack>
   );
 

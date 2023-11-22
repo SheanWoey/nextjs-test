@@ -3,6 +3,8 @@ import { alpha } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import ListItemText from '@mui/material/ListItemText';
 import ListItemButton from '@mui/material/ListItemButton';
+// components
+import Label from 'src/components/label';
 
 // ----------------------------------------------------------------------
 
@@ -15,10 +17,11 @@ type Props = {
     text: string;
     highlight: boolean;
   }[];
+  groupLabel: string;
   onClickItem: VoidFunction;
 };
 
-export default function ResultItem({ title, path, onClickItem }: Props) {
+export default function ResultItem({ title, path, groupLabel, onClickItem }: Props) {
   return (
     <ListItemButton
       onClick={onClickItem}
@@ -64,6 +67,8 @@ export default function ResultItem({ title, path, onClickItem }: Props) {
           </Box>
         ))}
       />
+
+      {groupLabel && <Label color="info">{groupLabel}</Label>}
     </ListItemButton>
   );
 }

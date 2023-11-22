@@ -35,6 +35,9 @@ export type NavListProps = {
 };
 
 export type NavSectionProps = StackProps & {
-  data: NavListProps[];
+  data: {
+    subheader: string;
+    items: NavListProps[];
+  }[];
   config?: NavConfigProps;
 };

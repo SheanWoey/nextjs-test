@@ -4,6 +4,7 @@ const ROOTS = {
   AUTH: '/auth',
   DASHBOARD: '/dashboard',
   PRODUCTS: '/products',
+  USER: '/user',
 };
 
 // ----------------------------------------------------------------------
@@ -20,8 +21,6 @@ export const paths = {
   // DASHBOARD
   dashboard: {
     root: ROOTS.DASHBOARD,
-    one: `${ROOTS.DASHBOARD}/one`,
-    two: `${ROOTS.DASHBOARD}/two`,
     three: `${ROOTS.DASHBOARD}/three`,
     group: {
       root: `${ROOTS.DASHBOARD}/group`,
@@ -36,5 +35,8 @@ export const paths = {
   categories: {
     root: `/categories`,
     new: (id: string) => `/categories/${id}`,
+  },
+  user: {
+    cart: `${ROOTS.USER}/cart`,
   },
 };

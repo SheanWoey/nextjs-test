@@ -3,12 +3,16 @@ import { useEffect, useRef, useState, useCallback } from 'react';
 // @mui
 import { styled, alpha, useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
+import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
 import Rating from '@mui/material/Rating';
+import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Unstable_Grid2';
 import Typography from '@mui/material/Typography';
 // routes
+import { paths } from 'src/routes/paths';
+// hooks
 import { useResponsive } from 'src/hooks/use-responsive';
 // theme
 import { secondaryFont } from 'src/theme/typography';
@@ -16,6 +20,8 @@ import { textGradient, bgGradient, bgBlur } from 'src/theme/css';
 // layouts
 import { HEADER } from 'src/layouts/config-layout';
 // components
+import Iconify from 'src/components/iconify';
+import { RouterLink } from 'src/routes/components';
 import { MotionContainer, varFade } from 'src/components/animate';
 
 // ----------------------------------------------------------------------
@@ -184,7 +190,8 @@ export default function HomeHero() {
             textAlign: 'center',
           }}
         >
-          Best ecommerce platform
+          Start a <br />
+          New Project with
         </Typography>
       </m.div>
 
@@ -198,14 +205,14 @@ export default function HomeHero() {
             repeat: Infinity,
           }}
         >
-          MEGAN RETAIL
+          Minimal
         </StyledTextGradient>
       </m.div>
 
       <m.div variants={varFade().in}>
         <Typography variant="body2" sx={{ textAlign: 'center' }}>
-          Welcome to Megan Retail, where you&apos;ll find the best deals on Everything. Start
-          shopping now and save big!
+          The starting point for your next project is based on MUI.Easy customization Helps you
+          build apps faster and better.
         </Typography>
       </m.div>
 
@@ -226,6 +233,72 @@ export default function HomeHero() {
           </Typography>
         </Stack>
       </m.div>
+
+      <m.div variants={varFade().in}>
+        <Stack spacing={1.5} direction={{ xs: 'column-reverse', sm: 'row' }} sx={{ mb: 5 }}>
+          <Stack alignItems="center" spacing={2}>
+            <Button
+              component={RouterLink}
+              href={paths.dashboard.root}
+              color="inherit"
+              size="large"
+              variant="contained"
+              startIcon={<Iconify icon="eva:flash-fill" width={24} />}
+            >
+              Live Preview
+            </Button>
+
+            <Link
+              color="inherit"
+              variant="caption"
+              target="_blank"
+              rel="noopener"
+              href="/"
+              sx={{
+                textDecoration: 'underline',
+                display: 'inline-flex',
+                alignItems: 'center',
+              }}
+            >
+              <Iconify icon="eva:external-link-fill" width={16} sx={{ mr: 0.5 }} />
+              Get Free Version
+            </Link>
+          </Stack>
+
+          <Button
+            color="inherit"
+            size="large"
+            variant="outlined"
+            startIcon={<Iconify icon="eva:external-link-fill" width={24} />}
+            target="_blank"
+            rel="noopener"
+            href="/"
+            sx={{ borderColor: 'text.primary' }}
+          >
+            Design Preview
+          </Button>
+        </Stack>
+      </m.div>
+
+      <Stack spacing={3} sx={{ textAlign: 'center' }}>
+        <m.div variants={varFade().in}>
+          <Typography variant="overline" sx={{ opacity: 0.4 }}>
+            Available For
+          </Typography>
+        </m.div>
+
+        <Stack spacing={2} direction="row" justifyContent="center">
+          {['figma', 'js', 'ts', 'nextjs', 'vite'].map((platform) => (
+            <m.div key={platform} variants={varFade().in}>
+              <Box
+                component="img"
+                src={`/assets/icons/platforms/ic_${platform}.svg`}
+                sx={{ width: 24, height: 24 }}
+              />
+            </m.div>
+          ))}
+        </Stack>
+      </Stack>
     </Stack>
   );
 

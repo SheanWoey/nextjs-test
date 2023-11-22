@@ -1,13 +1,9 @@
 'use client';
 
 import { CartProvider } from 'medusa-react';
-// auth
 import { AuthGuard } from 'src/auth/guard';
 import { StoreProvider } from 'src/hooks/useStore';
-// components
-import DashboardLayout from 'src/layouts/dashboard';
-
-// ----------------------------------------------------------------------
+import MainLayout from 'src/layouts/main';
 
 type Props = {
   children: React.ReactNode;
@@ -18,7 +14,7 @@ export default function Layout({ children }: Props) {
     <AuthGuard>
       <CartProvider>
         <StoreProvider>
-          <DashboardLayout>{children}</DashboardLayout>
+          <MainLayout>{children}</MainLayout>;
         </StoreProvider>
       </CartProvider>
     </AuthGuard>

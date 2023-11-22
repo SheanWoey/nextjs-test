@@ -1,16 +1,28 @@
 // utils
-import { PricedProduct } from '@medusajs/medusa/dist/types/pricing';
 import { flattenArray } from 'src/utils/flatten-array';
 // components
-import { NavListProps } from 'src/components/nav-section';
+import { NavListProps, NavSectionProps } from 'src/components/nav-section';
 
 // ----------------------------------------------------------------------
 
-export function getAllItems(data: PricedProduct[] | undefined) {
-  const items = flattenArray(data || []).map((option) => ({
-    title: option.title,
-    path: `/products/${option.handle}`,
-  }));
+type ItemProps = {
+  group: string;
+  title: string;
+  path: string;
+};
+
+export function getAllItems({ data }: NavSectionProps) {
+  const reduceItems = data.map((list) => handleLoop(list.items, list.subheader)).flat();
+
+  const items = flattenArray(reduceItems).map((option) => {
+    const group = splitPath(reduceItems, option.path);
+
+    return {
+      group: group && group.length > 1 ? group[0] : option.subheader,
+      title: option.title,
+      path: option.path,
+    };
+  });
 
   return items;
 }
@@ -18,13 +30,13 @@ export function getAllItems(data: PricedProduct[] | undefined) {
 // ----------------------------------------------------------------------
 
 type FilterProps = {
-  inputData: NavListProps[];
+  inputData: ItemProps[];
   query: string;
 };
 
 export function applyFilter({ inputData, query }: FilterProps) {
   if (query) {
-    inputData = inputData?.filter(
+    inputData = inputData.filter(
       (item) =>
         item.title.toLowerCase().indexOf(query.toLowerCase()) !== -1 ||
         item.path.toLowerCase().indexOf(query.toLowerCase()) !== -1
@@ -79,16 +91,17 @@ export function handleLoop(array: any, subheader?: string) {
 // ----------------------------------------------------------------------
 
 type GroupsProps = {
-  [key: string]: NavListProps[];
+  [key: string]: ItemProps[];
 };
 
-export function groupedData(array?: NavListProps[]) {
-  const group = array?.reduce((groups: GroupsProps, item) => {
-    groups[item.title] = groups[item.title] || [];
+export function groupedData(array: ItemProps[]) {
+  const group = array.reduce((groups: GroupsProps, item) => {
+    groups[item.group] = groups[item.group] || [];
 
-    groups[item.title].push(item);
+    groups[item.group].push(item);
 
     return groups;
   }, {});
+
   return group;
 }

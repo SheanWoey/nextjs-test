@@ -21,29 +21,7 @@ export default function HomeView() {
           position: 'relative',
           bgcolor: 'background.default',
         }}
-      >
-        {/* <HomeMinimal />
-
-        <HomeHugePackElements />
-
-        <Box sx={{ position: 'relative' }}>
-          <StyledPolygon />
-          <HomeForDesigner />
-          <StyledPolygon anchor="bottom" />
-        </Box>
-
-        <HomeDarkMode />
-
-        <HomeColorPresets />
-
-        <HomeCleanInterfaces />
-
-        <HomePricing />
-
-        <HomeLookingFor />
-
-        <HomeAdvertisement /> */}
-      </Box>
+      />
     </>
   );
 }

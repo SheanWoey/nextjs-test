@@ -194,8 +194,6 @@ export default function ProductDetailsView({ params }: Props) {
         mb: 15,
       }}
     >
-      {/* <CartIcon totalItems={checkout.totalItems} /> */}
-
       {isLoading && renderSkeleton}
 
       {isError && renderError}

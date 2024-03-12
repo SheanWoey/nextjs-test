@@ -1,12 +1,11 @@
-// sections
-import { NotFoundView } from 'src/sections/error';
+import { Metadata } from "next";
+import { NotFoundPageView } from "pages-sections/not-found";
 
-// ----------------------------------------------------------------------
-
-export const metadata = {
-  title: '404 Page Not Found!',
+export const metadata: Metadata = {
+  title: "404 - Next.js E-commerce Template",
+  description: "Bazaar Not Found Page View",
 };
 
-export default function NotFoundPage() {
-  return <NotFoundView />;
+export default function NotFound() {
+  return <NotFoundPageView />;
 }

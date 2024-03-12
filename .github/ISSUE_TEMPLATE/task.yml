@@ -1,0 +1,9 @@
+name: Task
+description: Task corresponding to a user story or bug report
+title: "[Task]: "
+body:
+  - type: textarea
+    attributes:
+      label: Root Issue Url
+      description: Place the url of the root issue here
+      placeholder: https://github.com/Megan-Jewellery/next-dev/issues/1

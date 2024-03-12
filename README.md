@@ -1,19 +1,26 @@
-## Medusa Storefront (potential production)
-https://megan-frontend-typescript.vercel.app/
+# Megan Medusa Frontend
 
-## Medusa Backend Admin Panel (staging)
+## Prerequisite
 
-https://megan-backend-medusajs.pages.dev/
+- Node.js v20.9.0
 
-## Medusa backend Admin API (staging)
+## Getting Started
 
-https://megan-backend-staging-3f1b68172676.herokuapp.com/
+1. Create a .env.local with the following data
+   ```bash
+   MEDUSA_BACKEND_URL=https://medusa-backend-staging-1adffeb80533.herokuapp.com/
+   ```
+2. Install dependencies
+   ```bash
+   npm install
+   ```
+3. Start Next.js server
+   ```bash
+   npm run dev
+   ```
 
-## NODE.JS
+Open [http://localhost:8080](http://localhost:8080) with your browser to see the result.
 
-- Node 18.x
+## Resources
 
-## USING NPM
-
-- npm i OR npm i --legacy-peer-deps
-- npm run dev
+- [Documentation](https://bazaar-doc.netlify.app/)

@@ -1,8 +1,7 @@
-import { MoneyAmount } from '@medusajs/medusa';
+import { MoneyAmount, ProductVariant, Region } from '@medusajs/medusa';
 import { formatAmount } from 'medusa-react';
-import { Region, Variant } from 'src/types/medusa';
 
-export const findCheapestRegionPrice = (variants: Variant[], regionId: string) => {
+export const findCheapestRegionPrice = (variants: ProductVariant[], regionId: string) => {
   const regionPrices = variants.reduce((acc, v) => {
     const price = v.prices.find((p) => p.region_id === regionId);
     if (price) {
@@ -28,7 +27,7 @@ export const findCheapestRegionPrice = (variants: Variant[], regionId: string) =
   return cheapestPrice;
 };
 
-export const findCheapestCurrencyPrice = (variants: Variant[], currencyCode: string) => {
+export const findCheapestCurrencyPrice = (variants: ProductVariant[], currencyCode: string) => {
   const currencyPrices = variants.reduce((acc, v) => {
     const price = v.prices.find((p) => p.currency_code === currencyCode);
     if (price) {
@@ -54,7 +53,7 @@ export const findCheapestCurrencyPrice = (variants: Variant[], currencyCode: str
   return cheapestPrice;
 };
 
-export const findExpensiveRegionPrice = (variants: Variant[], regionId: string) => {
+export const findExpensiveRegionPrice = (variants: ProductVariant[], regionId: string) => {
   const regionPrices = variants.reduce((acc, v) => {
     const price = v.prices.find((p) => p.region_id === regionId);
     if (price) {
@@ -80,7 +79,7 @@ export const findExpensiveRegionPrice = (variants: Variant[], regionId: string) 
   return expemsivePrice;
 };
 
-export const findExpensiveCurrencyPrice = (variants: Variant[], currencyCode: string) => {
+export const findExpensiveCurrencyPrice = (variants: ProductVariant[], currencyCode: string) => {
   const currencyPrices = variants.reduce((acc, v) => {
     const price = v.prices.find((p) => p.currency_code === currencyCode);
     if (price) {
@@ -106,7 +105,7 @@ export const findExpensiveCurrencyPrice = (variants: Variant[], currencyCode: st
   return expemsivePrice;
 };
 
-export const findCheapestPrice = (variants: Variant[], region: Region) => {
+export const findCheapestPrice = (variants: ProductVariant[], region: Region) => {
   const { id, currency_code } = region;
 
   let cheapestPrice = findCheapestRegionPrice(variants, id);
@@ -128,7 +127,7 @@ export const findCheapestPrice = (variants: Variant[], region: Region) => {
   return 'Not available in your region';
 };
 
-export const findPriceRange = (variants: Variant[], region: Region) => {
+export const findPriceRange = (variants: ProductVariant[], region: Region) => {
   const { id, currency_code } = region;
 
   let cheapestPrice = findCheapestRegionPrice(variants, id);

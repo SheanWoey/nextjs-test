@@ -1,10 +1,12 @@
-'use client';
+import CircularProgress from "@mui/material/CircularProgress";
+import FlexRowCenter from "components/flex-box/flex-row-center";
 
-// components
-import { SplashScreen } from 'src/components/loading-screen';
+const Loading = () => {
+  return (
+    <FlexRowCenter minHeight="100vh">
+      <CircularProgress color="primary" />
+    </FlexRowCenter>
+  );
+};
 
-// ----------------------------------------------------------------------
-
-export default function Loading() {
-  return <SplashScreen />;
-}
+export default Loading;

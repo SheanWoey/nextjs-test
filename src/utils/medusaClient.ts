@@ -1,7 +1,7 @@
-import Medusa from '@medusajs/medusa-js';
-import { MEDUSA_BACKEND_URL } from 'src/config-global';
-
-export const medusaClient = new Medusa({
-  baseUrl: MEDUSA_BACKEND_URL,
+import Medusa from "@medusajs/medusa-js";
+const medusaClient = new Medusa({
+  baseUrl: process.env.MEDUSA_BACKEND_URL ?? "http://localhost:8080",
   maxRetries: 3,
 });
+
+export default medusaClient;

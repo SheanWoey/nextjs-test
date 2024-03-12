@@ -1,80 +1,18 @@
-'use client';
+import { Metadata, Viewport } from "next";
+import { FashionTwoPageView } from "pages-sections/fashion-2/page-view";
 
-import { useScroll } from 'framer-motion';
-// @mui
-// import { styled } from '@mui/material/styles';
-import Box from '@mui/material/Box';
-// components
-import React from 'react';
-import ScrollProgress from 'src/components/scroll-progress';
-import HomeHero from './homeHero';
+export const metadata: Metadata = {
+  title: "Bazaar - Next.js E-commerce Template",
+  description: `Bazaar is a React Next.js E-commerce template. Build SEO friendly Online store, delivery app and Multi vendor store`,
+  authors: [{ name: "UI-LIB", url: "https://ui-lib.com" }],
+  keywords: ["e-commerce", "e-commerce template", "next.js", "react"],
+};
 
-// ----------------------------------------------------------------------
-
-// type StyledPolygonProps = {
-//   anchor?: 'top' | 'bottom';
-// };
-
-// const StyledPolygon = styled('div')<StyledPolygonProps>(({ anchor = 'top', theme }) => ({
-//   left: 0,
-//   zIndex: 9,
-//   height: 80,
-//   width: '100%',
-//   position: 'absolute',
-//   clipPath: 'polygon(0% 0%, 100% 100%, 0% 100%)',
-//   backgroundColor: theme.palette.background.default,
-//   display: 'block',
-//   lineHeight: 0,
-//   ...(anchor === 'top' && {
-//     top: -1,
-//     transform: 'scale(-1, -1)',
-//   }),
-//   ...(anchor === 'bottom' && {
-//     bottom: -1,
-//     backgroundColor: theme.palette.grey[900],
-//   }),
-// }));
-
-// ----------------------------------------------------------------------
-
-export default function HomeView() {
-  const { scrollYProgress } = useScroll();
-
-  return (
-    <>
-      <ScrollProgress scrollYProgress={scrollYProgress} />
-
-      <HomeHero />
-
-      <Box
-        sx={{
-          overflow: 'hidden',
-          position: 'relative',
-          bgcolor: 'background.default',
-        }}
-      >
-        {/* <HomeMinimal />
-
-        <HomeHugePackElements />
-
-        <Box sx={{ position: 'relative' }}>
-          <StyledPolygon />
-          <HomeForDesigner />
-          <StyledPolygon anchor="bottom" />
-        </Box>
-
-        <HomeDarkMode />
-
-        <HomeColorPresets />
-
-        <HomeCleanInterfaces />
-
-        <HomePricing />
-
-        <HomeLookingFor />
-
-        <HomeAdvertisement /> */}
-      </Box>
-    </>
-  );
+export default function IndexPage() {
+  return <FashionTwoPageView />;
 }
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+};
